@@ -1,8 +1,12 @@
+import { withUrqlClient } from "next-urql"
 import { Navbar } from "../components/Navbar"
+import { createUrqlClient } from "../utils/createUrqlClient"
 
 
-const Index = () => (
-  <><Navbar /><div>Hello world</div></>
-)
+const Index = () => {
+  return (
+    <><Navbar /><div>Hello world</div></>
+  )
+}
 
-export default Index
+export default withUrqlClient(createUrqlClient)(Index)
