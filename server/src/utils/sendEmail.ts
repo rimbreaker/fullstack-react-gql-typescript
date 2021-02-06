@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import accessEnv from "./accesEnv";
 
 export async function sendEmail(to: string, html: string) {
   //let testAccount = await nodemailer.createTestAccount();
@@ -9,8 +10,8 @@ export async function sendEmail(to: string, html: string) {
     port: 587,
     secure: false,
     auth: {
-      user: "vwdvn72dsg5wwkdb@ethereal.email",
-      pass: "UsZHreQuMPzj5cxut1",
+      user: accessEnv("MAILER_USER"),
+      pass: accessEnv("MAILER_PASS"),
     },
   });
 
