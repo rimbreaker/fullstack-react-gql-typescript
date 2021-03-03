@@ -7,7 +7,7 @@ import { createUrqlClient } from "../utils/createUrqlClient"
 import NextLink from 'next/link'
 
 const Index = () => {
-  const [variables, setVariables] = useState({ limit: 10, cursor: null as null | string })
+  const [variables, setVariables] = useState({ limit: 33, cursor: null as null | string })
   const [{ data, fetching }] = usePostsQuery({
     variables
   });
