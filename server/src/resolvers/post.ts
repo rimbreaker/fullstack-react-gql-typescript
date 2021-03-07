@@ -16,8 +16,6 @@ import {
 import { MyContext } from "src/types";
 import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
-import { Updoot } from "../entities/Updoot";
-
 @InputType()
 class PostInput {
   @Field()
@@ -51,19 +49,25 @@ export class PostResolver {
     const isUpdoot = value !== -1;
     const realValue = isUpdoot ? 1 : -1;
     const { userId } = req.session;
-    await Updoot.insert({
+    /*  await Updoot.insert({
       userId,
       postId,
       value: realValue,
-    });
+    }); */
 
     await getConnection().query(
       `
+    START TRANSACTION;
+
+    INSERT INTO updoot ("userId", "postId", value)
+    values (${userId},${postId},${realValue});
+    
     UPDATE post
-    SET points = points +$1
-    WHERE id = $2
-    `,
-      [realValue, postId]
+    SET points = points +${realValue}
+    WHERE id = ${postId};
+    
+    COMMIT;
+    `
     );
     return true;
   }
