@@ -1,20 +1,21 @@
-import { Box, Button, Flex, Heading, IconButton, Link, Stack, Text } from "@chakra-ui/react"
+import { Box, Button, Flex, Heading, Link, Stack, Text } from "@chakra-ui/react"
 import { withUrqlClient } from "next-urql"
-import React, { useState } from "react"
-import { Layout } from "../components/Layout"
-import { useDeletePostMutation, usePostsQuery } from "../generated/graphql"
-import { createUrqlClient } from "../utils/createUrqlClient"
 import NextLink from 'next/link'
+import React, { useState } from "react"
+import { EditDeletePostButtons } from "../components/EditDeletePostButtons"
+import { Layout } from "../components/Layout"
 import { UpdootSection } from "../components/UpdootSection"
-import { DeleteIcon } from "@chakra-ui/icons"
+import { usePostsQuery } from "../generated/graphql"
+import { createUrqlClient } from "../utils/createUrqlClient"
 
 const Index = () => {
   const [variables, setVariables] = useState({ limit: 15, cursor: null as null | string })
+
+
   const [{ data, fetching }] = usePostsQuery({
     variables
   });
 
-  const [, deletePost] = useDeletePostMutation()
   if (!fetching && !data) {
     return <div>you got query failed for some reason</div>
   }
@@ -36,29 +37,25 @@ const Index = () => {
                   <Text mt={4}>
                     {p.textSnippet}...
                 </Text>
-                  <IconButton
-                    ml='auto'
-                    aria-label='delete post'
-                    colorScheme='red'
-                    icon={<DeleteIcon />}
-                    onClick={() => {
-                      deletePost({ id: p.id })
-                    }}
-                  />
+                  <Box ml='auto'>
+                    <EditDeletePostButtons id={p.id} creatorId={p.creator.id} />
+                  </Box>
                 </Flex>
               </Box>
             </Flex>)}
       </Stack>}
-      {data && data.posts.hasMore ?
-        <Flex>
-          <Button isLoading={fetching} onClick={() => {
-            setVariables({
-              limit: variables.limit,
-              cursor: data.posts.posts[data.posts.posts.length - 1].createdAt
-            })
-          }} m="auto" my={8}>load more</Button>
-        </Flex> : null}
-    </Layout>
+      {
+        data && data.posts.hasMore ?
+          <Flex>
+            <Button isLoading={fetching} onClick={() => {
+              setVariables({
+                limit: variables.limit,
+                cursor: data.posts.posts[data.posts.posts.length - 1].createdAt
+              })
+            }} m="auto" my={8}>load more</Button>
+          </Flex> : null
+      }
+    </Layout >
   )
 }
 
